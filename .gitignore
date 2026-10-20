@@ -1,0 +1,21 @@
+# Dependencias y archivos generados
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+.vercel/
+
+# Configuración privada; conservar las plantillas
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# Archivos locales y registros
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
