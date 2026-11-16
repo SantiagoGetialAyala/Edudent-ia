@@ -29,7 +29,7 @@ El estudiante necesita observar modelos dentales en tres dimensiones y practicar
 | FR-05 | El usuario debe poder seleccionar un archivo STL o GLB local y visualizarlo sin subirlo al servidor; formatos distintos deben rechazarse con un mensaje. | `app/page.tsx`, `components/DentalModelViewer.tsx` |
 | FR-06 | La práctica debe presentar cinco preguntas, aceptar una respuesta por pregunta, indicar acierto y explicación y calcular el puntaje al terminar. | `components/DentalTraining.tsx` |
 | FR-07 | Al completar una práctica, el sistema debe guardar el puntaje y fecha en el navegador, conservar como máximo 30 sesiones y permitir consultarlas en Progreso. | `app/page.tsx`, `components/DentalTraining.tsx` |
-| FR-08 | El tutor debe rechazar una pregunta vacía y, con credenciales de servidor, consultar Gemini incluyendo el diente y la vista actuales. Si falta la clave o falla el proveedor, debe responder con un error. | `app/api/tutor/route.ts`, `app/page.tsx` |
+| FR-08 | El tutor debe rechazar JSON inválido, cuerpos que no sean objetos, preguntas vacías y preguntas mayores de 1200 caracteres con HTTP 400. Con credenciales de servidor, debe consultar Gemini incluyendo el diente y la vista actuales, limitados a 120 y 80 caracteres. Si falta la clave o falla el proveedor, debe responder con un error. | `app/api/tutor/route.ts`, `app/page.tsx` |
 
 ## Requisitos no funcionales
 
@@ -37,7 +37,7 @@ El estudiante necesita observar modelos dentales en tres dimensiones y practicar
 | --- | --- | --- |
 | NFR-01 | La aplicación principal debe poder ejecutarse sin proveedor de IA configurado. | Inicio, catálogo y práctica no dependen de la clave Gemini. |
 | NFR-02 | La clave del tutor no debe exponerse en código cliente ni guardarse en Git. | Uso en ruta de servidor y plantilla `.env.local.example`; `.env.local` excluido por `.gitignore`. |
-| NFR-03 | La interfaz debe estar en español y comunicar carga y errores relevantes. | Etiquetas, estados y mensajes de error presentes en la interfaz. |
+| NFR-03 | La interfaz y las rutas deben comunicar errores relevantes y acotar entradas no válidas. | Mensajes en español; la ruta rechaza pregunta vacía, JSON malformado y pregunta mayor de 1200 caracteres. |
 | NFR-04 | La representación visual de color STL debe identificarse como ilustrativa, no como segmentación clínica. | Aviso en la interfaz y en README. |
 | NFR-05 | El alcance debe ser ejecutable con el stack descrito y pasos reproducibles. | `npm install`, `npm run dev`; compilación mediante `npm run build`. |
 
