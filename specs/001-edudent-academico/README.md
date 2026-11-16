@@ -16,6 +16,8 @@ Este paquete aplica el flujo SDD de forma Brownfield: parte de la arquitectura y
 | [Verificación y convergencia](verification.md) | Casos ejecutados, resultados, límites y brechas. |
 | [Decisiones](decisions.md) | Decisiones arquitectónicas y sus razones. |
 | [Guion de demostración](demo.md) | Recorrido corto reproducible para la exposición. |
+| [Guía de estudio (PDF)](../../output/pdf/Guia_de_estudio_Edudent-IA.pdf) | Explicación del propósito, arquitectura, funciones, datos y límites. |
+| [Exposición para cuatro integrantes (PDF)](../../output/pdf/Exposicion_Edudent-IA_4_integrantes.pdf) | Reparto de 8-10 minutos, libreto, demostración y preguntas probables. |
 
 ## Convención de evidencia
 

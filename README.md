@@ -49,6 +49,12 @@ Next.js 14, React 18, TypeScript y Tailwind CSS conforman la interfaz y las ruta
 
 La documentación de diseño, especificación, plan, tareas, decisiones, verificación y demo está en [`specs/001-edudent-academico/`](specs/001-edudent-academico/README.md).
 
+## Material de exposición
+
+- [Guía de estudio del proyecto (PDF)](output/pdf/Guia_de_estudio_Edudent-IA.pdf)
+- [Guion de exposición para cuatro integrantes (PDF)](output/pdf/Exposicion_Edudent-IA_4_integrantes.pdf)
+- [Instrucciones para regenerar los PDF](output/pdf/README.md)
+
 ## Verificación
 
 ```powershell
