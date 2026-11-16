@@ -13,7 +13,7 @@ Las tareas identifican evidencia existente y trabajo documental/técnico realiza
 | T-07 | Revisar vínculos entre artefactos y código observado. | Análisis | Hecho | `analysis.md`. |
 | T-08 | Ejecutar verificaciones solicitadas y registrar resultados observables. | NFR-05 / convergencia | Hecho | `verification.md`: lint, tipos, build y cuatro smoke tests HTTP. |
 | T-09 | Preparar README y guion de demo reproducible. | Documentación y demo | Hecho | `README.md`, `demo.md`. |
-| T-10 | Guardar avances progresivos en rama `developer`. | Control de versiones | En curso | Historial Git; falta commit final de artefactos y verificación. |
+| T-10 | Guardar avances progresivos en rama `developer`. | Control de versiones | Hecho | Historial Git; commits `3856b36` y `5eb48d1` contienen los hitos revisados. |
 | T-11 | Obtener revisión y PR del equipo del curso. | Colaboración | Pendiente externo | Requiere participación de integrantes y acceso al repositorio remoto; no se simula localmente. |
 
 ## Orden y dependencias
