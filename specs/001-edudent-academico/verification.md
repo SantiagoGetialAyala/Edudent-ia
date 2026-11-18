@@ -1,6 +1,7 @@
 # Verificación y convergencia
 
 **Fecha:** 2026-11-16  
+**Última revisión:** 2026-11-17  
 **Rama:** `developer`  
 **Alcance:** comprobaciones estáticas y smoke tests HTTP locales; no se ejecutó una prueba clínica ni una suite de UI automatizada.
 
