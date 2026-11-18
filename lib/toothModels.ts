@@ -21,8 +21,5 @@ export async function discoverToothModels(directory = path.join(process.cwd(), "
       models[fdi] = { url: `/models/${encodeURIComponent(file)}`, format: match[2].toLowerCase() as ToothModel["format"] };
     }
   }
-  if (!models["11"] && files.includes("incisivo-central-superior.glb")) {
-    models["11"] = { url: "/models/incisivo-central-superior.glb", format: "glb" };
-  }
   return models;
 }

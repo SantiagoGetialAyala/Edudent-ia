@@ -158,7 +158,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState("Informacion");
   const [activeSection, setActiveSection] = useState("Inicio");
   const [activeFilter, setActiveFilter] = useState("Todos");
-  const [selectedTooth, setSelectedTooth] = useState("16");
+  const [selectedTooth, setSelectedTooth] = useState("14");
   const [toothModels, setToothModels] = useState<Record<string, ToothModel>>({});
   const [toothMode, setToothMode] = useState(false);
   const [catalogReady, setCatalogReady] = useState(false);
@@ -170,7 +170,7 @@ export default function HomePage() {
   const [uploadError, setUploadError] = useState("");
   const [results, setResults] = useState<TrainingResult[]>([]);
   const [storageNotice, setStorageNotice] = useState("");
-  const currentToothName = teeth.find(tooth => tooth.number === selectedTooth)?.name ?? "Primer Molar Superior";
+  const currentToothName = teeth.find(tooth => tooth.number === selectedTooth)?.name ?? "Primer Premolar Superior";
   const [uploadedFileName, setUploadedFileName] = useState<string>();
   const [searchQuery, setSearchQuery] = useState("");
   const [toolMode, setToolMode] = useState("Rotacion libre");
@@ -179,13 +179,15 @@ export default function HomePage() {
     {
       role: "assistant",
       text:
-        "Hola, soy tu tutor dental. Preguntame sobre caras, cuspides, raices, referencias anatomicas o pide retroalimentacion."
+        "Hola, soy tu tutor dental. Pregúntame sobre la pieza 14, sus caras, cúspides, raíces, arcadas o pide retroalimentación. Si un dato depende de la variación anatómica o no se puede comprobar con el modelo, te lo indicaré."
     }
   ]);
   const [isTutorLoading, setIsTutorLoading] = useState(false);
+  const tutorRequestRef = useRef<AbortController | null>(null);
+  useEffect(() => () => tutorRequestRef.current?.abort(), []);
   const selectedModel = toothMode ? toothModels[selectedTooth] : undefined;
   const displayedModelUrl = uploadedModelUrl ?? selectedModel?.url;
-  const displayedTitle = uploadedFileName ? "Modelo importado" : selectedModel ? `${currentToothName} · Diente ${selectedTooth.slice(-1)} (FDI ${selectedTooth})` : modelTitle;
+  const displayedTitle = uploadedFileName ? "Modelo importado" : selectedModel ? `${currentToothName} · Diente ${selectedTooth} (FDI)` : modelTitle;
 
   const refreshToothModels = useCallback(async () => {
     try {
@@ -319,7 +321,10 @@ export default function HomePage() {
   async function handleTutorSubmit() {
     const question = tutorQuestion.trim();
 
-    if (!question || isTutorLoading) return;
+    if (!question || tutorRequestRef.current) return;
+    const controller = new AbortController();
+    tutorRequestRef.current = controller;
+    const timeout = setTimeout(() => controller.abort(), 52000);
 
     setTutorMessages((messages) => [...messages, { role: "student", text: question }]);
     setTutorQuestion("");
@@ -329,10 +334,13 @@ export default function HomePage() {
       const response = await fetch("/api/tutor", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           question,
-          tooth: currentToothName,
-          activeView
+          scope: uploadedModelUrl ? "uploaded" : selectedModel ? "tooth" : visibility,
+          fdi: selectedModel && !uploadedModelUrl ? selectedTooth : undefined,
+          activeView,
+          history: tutorMessages.slice(-8).filter(message => message.text.length <= 4000)
         })
       });
       const data = await response.json();
@@ -341,7 +349,7 @@ export default function HomePage() {
         ...messages,
         {
           role: "assistant",
-          text: data.answer ?? data.error ?? "No pude generar retroalimentacion."
+          text: (response.ok && typeof data.answer === "string" ? data.answer : typeof data.error === "string" ? data.error : "El tutor no pudo responder. Inténtalo de nuevo en unos momentos.")
         }
       ]);
     } catch {
@@ -349,10 +357,14 @@ export default function HomePage() {
         ...messages,
         {
           role: "assistant",
-          text: "No pude conectar con el tutor. Revisa el servidor y la configuracion del .env."
+          text: controller.signal.aborted
+            ? "El tutor tardó demasiado en responder. Inténtalo de nuevo en unos momentos."
+            : "No pude conectar con el tutor. Comprueba tu conexión e inténtalo de nuevo."
         }
       ]);
     } finally {
+      clearTimeout(timeout);
+      tutorRequestRef.current = null;
       setIsTutorLoading(false);
     }
   }
@@ -553,7 +565,7 @@ export default function HomePage() {
 
               <div className="absolute inset-x-3 bottom-3 z-20 space-y-3 rounded-2xl border border-white/12 bg-[#101d2c]/95 p-3 text-sm backdrop-blur">
                 {uploadError && <p role="alert" className="text-rose-300">{uploadError}</p>}
-                {toothMode && !selectedModel && !uploadedModelUrl && catalogReady && <p role="status" className="text-amber-200">El diente {selectedTooth.slice(-1)} (FDI {selectedTooth}) aún no tiene modelo individual disponible. Se muestran las arcadas completas.</p>}
+                {toothMode && !selectedModel && !uploadedModelUrl && catalogReady && <p role="status" className="text-amber-200">El diente {selectedTooth} (FDI) aún no tiene modelo individual disponible. Se muestran las arcadas completas.</p>}
                 <div className="flex flex-wrap items-center gap-2">
                   {([['both', 'Ambas arcadas'], ['upper', 'Superior'], ['lower', 'Inferior']] as const).map(([value, label]) => <button key={value} disabled={!!displayedModelUrl} aria-pressed={!displayedModelUrl && visibility === value} onClick={() => setVisibility(value)} className={`rounded-lg px-3 py-2 disabled:opacity-40 ${!displayedModelUrl && visibility === value ? 'bg-cyanline/20 text-cyanline' : 'bg-white/5'}`}>{label}</button>)}
                   <button aria-pressed={autoRotate} onClick={() => setAutoRotate(v => !v)} className="rounded-lg border border-white/15 px-3 py-2">{autoRotate ? 'Pausar giro' : 'Giro automático'}</button>
@@ -606,7 +618,7 @@ export default function HomePage() {
                   >
                     <ToothThumb />
                     <span className="mt-2 block text-sm font-semibold leading-tight">{tooth.name}</span>
-                    <span className="text-sm text-slate-300">Diente {tooth.number.slice(-1)} · FDI {tooth.number}</span>
+                    <span className="text-sm text-slate-300">Diente {tooth.number} · FDI</span>
                     <span className={`mt-1 block text-xs ${toothModels[tooth.number] ? "text-cyanline" : "text-slate-400"}`}>{!catalogReady ? "Consultando modelos…" : toothModels[tooth.number] ? "Abrir diente 3D" : "Modelo pendiente"}</span>
                   </button>
                 ))}
@@ -704,7 +716,7 @@ export default function HomePage() {
                     value={tutorQuestion}
                     onChange={(event) => setTutorQuestion(event.target.value)}
                     className="min-h-24 w-full shrink-0 resize-none rounded-xl border border-white/10 bg-[#07111d]/78 p-4 text-sm text-slate-100 outline-none transition placeholder:text-slate-500 focus:border-cyanline/70 lg:min-h-28"
-                    placeholder="Pregunta algo: por ejemplo, explicame la cara oclusal del primer molar superior..."
+                    placeholder="Por ejemplo: ¿qué rasgos ayudan a identificar la cara mesial del diente 14?"
                   />
                   <button
                     onClick={handleTutorSubmit}

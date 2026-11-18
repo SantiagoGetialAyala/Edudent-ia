@@ -19,7 +19,7 @@ export function prepareDentalArches(upperSource: BufferGeometry, lowerSource: Bu
   for (const [arch, geometry] of [["upper", upper], ["lower", lower]] as const) {
     const positions = geometry.getAttribute("position");
     const colors = new Float32Array(positions.count * 3);
-    const enamel = new Color("#fff4df");
+    const enamel = new Color("#f0eada");
     const gum = new Color("#ca7182");
     const color = new Color();
     for (let i = 0; i < positions.count; i++) {
